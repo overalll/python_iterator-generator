@@ -1,0 +1,79 @@
+import random
+import os
+from PIL import Image
+import numpy as np
+
+
+def random_walk(mu, x, sigma, n):
+    for i in range(n):
+        yield x #暂停当前的运行信息，返回 yield值,并在下一次执行next()方法时从当前位置继续运行
+        w = random.normalvariate(0, sigma) #正态分布的随机
+        x = mu + x + w
+        x = round(x, 2)  #保留小数位数
+
+
+def multy_walk(w1, w2, w3):
+    mtuple = zip(w1, w2, w3)   #多维随机游走序列
+    for i in mtuple:
+        print(i)
+    return mtuple
+
+
+class FaceDataset:
+
+    def __init__(self, path, face_list):
+        self.path = path
+        self.face_list = face_list
+
+    def load_face(self):
+        for root, dirs, files in os.walk(self.path):
+            for i in files:   #迭代寻找子文件中的图片
+                if '.jpg' in i:
+                    l = 'D:\\pyctry\\one\\'
+                    self.face_list.append(l + root + '\\' + i)
+        return self.face_list
+
+    def face_process(self, pic):
+        img = Image.open(pic)
+        img = np.array(img)  #变为ndarray格式
+        ndarray = img
+        return ndarray
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        k = 0
+        n = 28204
+        if k < n:
+            fpic = FaceDataset.face_process(self, self.face_list[k])
+            k += 1
+            return fpic
+        else:
+            raise StopIteration('不存在')
+
+
+def main():
+    n = 10
+    walk1 = list(random_walk(0, 0.01, 2, n))
+    walk2 = list(random_walk(0.1, 0.15, 1, n))
+    walk3 = list(random_walk(2, 0.5, 4, n))
+    print(walk1)
+    multy_walk(walk1, walk2, walk3)
+    path = 'originalPics'
+    face_list = []
+    test = FaceDataset(path, face_list)
+    faces = test.load_face()
+    pnarry = []
+    for p in faces:
+        pnarry.append(test.face_process(p))
+    print(pnarry[0])
+    for j in test:
+        print(j)
+    '''for i in range(10):
+        print(next(test))'''
+
+
+main()
+
+
